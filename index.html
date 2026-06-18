@@ -3,31 +3,115 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="27NetTeam — Được xây dựng bởi Nguyễn Như Hải Đăng. Sinh viên lập trình từ PTIT hợp tác cùng Rikkei Education. Kiến tạo Công nghệ Tương lai.">
-    <meta name="keywords" content="27NetTeam, Nguyễn Như Hải Đăng, PTIT, Rikkei Education, AI, Web Development, Tech Startup">
+    <meta name="description" content="Nguyễn Như Hải Đăng — CV & Portfolio. Sinh viên lập trình từ PTIT × Rikkei Education. Kiến tạo Công nghệ Tương lai.">
+    <meta name="keywords" content="27NetTeam, Nguyễn Như Hải Đăng, PTIT, Rikkei Education, AI, Web Development, CV, Portfolio">
     <meta name="author" content="Nguyễn Như Hải Đăng">
     <meta property="og:image" content="https://27netteam.top/img/image.png">
     <link rel="shortcut icon" href="./img/vuông.png" type="image/x-icon">
-    <title>27NetTeam — Nguyễn Như Hải Đăng</title>
+    <title>Nguyễn Như Hải Đăng — CV & Portfolio</title>
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;800;900&family=Inter:wght@300;400;500;600;700&family=Noto+Sans+JP:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;800;900&family=Inter:wght@300;400;500;600;700&family=Noto+Sans+JP:wght@300;400;500;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/lykmapipo/themify-icons@0.1.2/css/themify-icons.css">
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
+    <!-- ===================== CINEMATIC INTRO OVERLAY ===================== -->
+    <div id="intro-overlay" aria-hidden="true">
+        <div class="intro-scanlines"></div>
+        <div class="intro-grid-bg"></div>
+        <canvas id="intro-particles-canvas"></canvas>
+        
+        <div class="intro-content">
+            <!-- Phase 1: Logo Draw -->
+            <div class="intro-logo-wrap" id="intro-logo-wrap">
+                <svg class="intro-logo-svg" viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <defs>
+                        <linearGradient id="intro-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+                            <stop offset="0%" stop-color="#00f0ff"/>
+                            <stop offset="100%" stop-color="#a855f7"/>
+                        </linearGradient>
+                        <filter id="intro-glow">
+                            <feGaussianBlur stdDeviation="4" result="blur"/>
+                            <feMerge>
+                                <feMergeNode in="blur"/>
+                                <feMergeNode in="blur"/>
+                                <feMergeNode in="SourceGraphic"/>
+                            </feMerge>
+                        </filter>
+                    </defs>
+                    <!-- Hexagon outline - will be drawn via stroke-dasharray -->
+                    <polygon class="intro-hex" points="100,10 180,50 180,150 100,190 20,150 20,50" 
+                             stroke="url(#intro-grad)" stroke-width="2" fill="none" filter="url(#intro-glow)"/>
+                    <polygon class="intro-hex-inner" points="100,30 160,60 160,140 100,170 40,140 40,60" 
+                             stroke="url(#intro-grad)" stroke-width="0.8" fill="none" opacity="0.3"/>
+                    <!-- 27 Text -->
+                    <text class="intro-27-text" x="100" y="105" text-anchor="middle" 
+                          font-family="Orbitron, sans-serif" font-size="52" font-weight="900" 
+                          fill="url(#intro-grad)" filter="url(#intro-glow)" opacity="0">27</text>
+                    <text class="intro-nt-text" x="100" y="135" text-anchor="middle" 
+                          font-family="Orbitron, sans-serif" font-size="20" font-weight="500" 
+                          fill="url(#intro-grad)" opacity="0" letter-spacing="8">NT</text>
+                </svg>
+            </div>
+
+            <!-- Phase 2: Name Reveal -->
+            <div class="intro-name" id="intro-name">
+                <span class="intro-name-text"></span>
+                <span class="intro-cursor">|</span>
+            </div>
+
+            <!-- Phase 3: Tagline -->
+            <div class="intro-tagline" id="intro-tagline">
+                <span class="intro-tagline-kanji">未来技術創造</span>
+                <span class="intro-tagline-text" data-vi="Kiến Tạo Công Nghệ Tương Lai" data-en="Architecting The Future">Kiến Tạo Công Nghệ Tương Lai</span>
+            </div>
+
+            <!-- Progress bar -->
+            <div class="intro-progress" id="intro-progress">
+                <div class="intro-progress-fill"></div>
+            </div>
+        </div>
+
+        <!-- Flash transition overlay -->
+        <div class="intro-flash" id="intro-flash"></div>
+
+        <!-- Skip button -->
+        <button class="intro-skip" id="intro-skip" aria-label="Bỏ qua intro">
+            <span data-vi="Bỏ qua" data-en="Skip">Bỏ qua</span>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polyline points="13,17 18,12 13,7"/><polyline points="6,17 11,12 6,7"/>
+            </svg>
+        </button>
+    </div>
+
     <!-- ===================== CURSOR GLOW ===================== -->
     <div id="cursor-glow" aria-hidden="true"></div>
 
     <!-- ===================== PARTICLES CANVAS ===================== -->
     <canvas id="particles-canvas" aria-hidden="true"></canvas>
 
+    <!-- ===================== AURORA BACKGROUND ===================== -->
+    <div id="aurora-bg" class="aurora-bg" aria-hidden="true">
+        <div class="aurora-layer aurora-layer--1"></div>
+        <div class="aurora-layer aurora-layer--2"></div>
+        <div class="aurora-layer aurora-layer--3"></div>
+    </div>
+
     <!-- ===================== NAVIGATION ===================== -->
     <nav id="navbar" role="navigation" aria-label="Điều hướng chính">
         <div class="nav-container">
-            <a href="#hero" class="nav-logo" aria-label="27NetTeam Trang chủ">
-                <img width="20%" src="./img/logo.png" alt="27NetTeam">
+            <a href="#hero" class="nav-logo" aria-label="27NetTeam Trang chủ" style="text-decoration: none;">
+                <span class="title-line title-line--animated" data-text="27NetTeam" style="font-size: 1.4rem; font-weight: 800; letter-spacing: 2px; line-height: 1;">27NetTeam</span>
             </a>
+            <ul class="nav-links" id="nav-links">
+                <li><a href="#about" class="nav-link" data-vi="Giới thiệu" data-en="About">Giới thiệu</a></li>
+                <li><a href="#projects" class="nav-link" data-vi="Dự án" data-en="Projects">Dự án</a></li>
+                <li><a href="#skills" class="nav-link" data-vi="Kỹ năng" data-en="Skills">Kỹ năng</a></li>
+                <li><a href="#vision" class="nav-link" data-vi="Tầm nhìn" data-en="Vision">Tầm nhìn</a></li>
+                <li><a href="#contact" class="nav-link nav-link--cta" data-vi="Liên hệ" data-en="Contact">Liên hệ</a></li>
+            </ul>
             <!-- Language Switcher -->
             <button class="lang-switcher" id="lang-switcher" aria-label="Chuyển ngôn ngữ">
                 <span class="lang-option lang-option--active" data-lang="vi">VI</span>
@@ -39,19 +123,23 @@
                 <span class="hamburger-line"></span>
                 <span class="hamburger-line"></span>
             </button>
-            <ul class="nav-links" id="nav-links">
-                <li><a href="#about" class="nav-link" data-vi="Giới thiệu" data-en="About">Giới thiệu</a></li>
-                <li><a href="#projects" class="nav-link" data-vi="Dự án" data-en="Projects">Dự án</a></li>
-                <li><a href="#skills" class="nav-link" data-vi="Kỹ năng" data-en="Skills">Kỹ năng</a></li>
-                <li><a href="#vision" class="nav-link" data-vi="Tầm nhìn" data-en="Vision">Tầm nhìn</a></li>
-                <li><a href="#contact" class="nav-link nav-link--cta" data-vi="Liên hệ" data-en="Contact">Liên hệ</a></li>
-            </ul>
         </div>
     </nav>
 
     <!-- ===================== HERO SECTION ===================== -->
     <section id="hero" class="hero-section">
         <div class="hero-bg-grid" aria-hidden="true"></div>
+        <!-- Floating code decorations -->
+        <div class="hero-floating-elements" aria-hidden="true">
+            <span class="float-el float-el--1">&lt;/&gt;</span>
+            <span class="float-el float-el--2">{ }</span>
+            <span class="float-el float-el--3">01</span>
+            <span class="float-el float-el--4">AI</span>
+            <span class="float-el float-el--5">λ</span>
+            <span class="float-el float-el--6">∞</span>
+            <span class="float-el float-el--7">fn()</span>
+            <span class="float-el float-el--8">██</span>
+        </div>
         <div class="hero-content">
             <!-- Hero Logo Mark -->
             <div class="hero-logo reveal">
@@ -95,18 +183,22 @@
                 <span>PTIT × Rikkei Education</span>
             </div>
             <h1 class="hero-title reveal">
-                <span class="title-line title-line--glitch" data-text="27NetTeam">27NetTeam</span>
+                <span class="title-line title-line--animated" data-text="Nguyen Nhu Hai Dang">Nguyen Nhu Hai Dang</span>
             </h1>
-            <p class="hero-subtitle reveal" data-vi="Được xây dựng bởi <span class='highlight-name'>Nguyễn Như Hải Đăng</span>" data-en="Built by <span class='highlight-name'>Nguyễn Như Hải Đăng</span>">
-                Được xây dựng bởi <span class="highlight-name">Nguyễn Như Hải Đăng</span>
+            <p class="hero-role reveal">
+                <span class="role-tag" data-vi="Full-Stack Developer" data-en="Full-Stack Developer">Full-Stack Developer</span>
+                <span class="role-divider">•</span>
+                <span class="role-tag" data-vi="AI Engineer" data-en="AI Engineer">AI Engineer</span>
+                <span class="role-divider">•</span>
+                <span class="role-tag" data-vi="Nhà sáng lập 27NetTeam" data-en="Founder of 27NetTeam">Nhà sáng lập 27NetTeam</span>
             </p>
-            <p class="hero-tagline reveal" data-vi-text="Kiến Tạo Công Nghệ Tương Lai" data-en-text="Future Tech Builder">
+            <p class="hero-tagline reveal" data-vi-text="Kiến Tạo Công Nghệ Tương Lai" data-en-text="Architecting The Future">
                 <span class="tagline-kanji" aria-hidden="true">未来技術</span>
                 <span class="tagline-main">Kiến Tạo Công Nghệ Tương Lai</span>
             </p>
             <div class="hero-cta reveal">
                 <a href="#about" class="btn btn--primary" id="cta-explore">
-                    <span class="btn-text" data-vi="Khám Phá Ngay" data-en="Explore Now">Khám Phá Ngay</span>
+                    <span class="btn-text" data-vi="Khám Phá CV" data-en="Explore CV">Khám Phá CV</span>
                     <span class="btn-icon">→</span>
                     <span class="btn-ripple" aria-hidden="true"></span>
                 </a>
@@ -115,7 +207,7 @@
                 </a>
             </div>
         </div>
-        <!-- Scroll indicator - outside hero-content so it sticks to bottom -->
+        <!-- Scroll indicator -->
         <div class="hero-scroll-indicator reveal" aria-hidden="true">
             <div class="scroll-mouse">
                 <div class="scroll-wheel"></div>
@@ -134,7 +226,7 @@
         </div>
     </section>
 
-    <!-- ===================== ABOUT SECTION ===================== -->
+    <!-- ===================== ABOUT / CV SECTION ===================== -->
     <section id="about" class="about-section">
         <div class="section-container">
             <div class="section-header reveal">
@@ -142,6 +234,47 @@
                 <h2 class="section-title" data-vi="Về <span class='text-glow'>Tôi</span>" data-en="About <span class='text-glow'>Me</span>">Về <span class="text-glow">Tôi</span></h2>
                 <div class="section-line"></div>
             </div>
+
+            <!-- CV Info Cards -->
+            <div class="cv-info-grid reveal">
+                <div class="cv-info-card glass-card">
+                    <div class="cv-info-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                    </div>
+                    <div class="cv-info-content">
+                        <span class="cv-info-label" data-vi="Họ và tên" data-en="Full Name">Họ và tên</span>
+                        <span class="cv-info-value">Nguyễn Như Hải Đăng</span>
+                    </div>
+                </div>
+                <div class="cv-info-card glass-card">
+                    <div class="cv-info-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg>
+                    </div>
+                    <div class="cv-info-content">
+                        <span class="cv-info-label" data-vi="Trường" data-en="University">Trường</span>
+                        <span class="cv-info-value" data-vi="PTIT — Học viện CNBCVT" data-en="PTIT — Posts & Telecom Institute">PTIT — Học viện CNBCVT</span>
+                    </div>
+                </div>
+                <div class="cv-info-card glass-card">
+                    <div class="cv-info-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+                    </div>
+                    <div class="cv-info-content">
+                        <span class="cv-info-label" data-vi="Vị trí" data-en="Location">Vị trí</span>
+                        <span class="cv-info-value" data-vi="Hà Nội, Việt Nam 🇻🇳" data-en="Hanoi, Vietnam 🇻🇳">Hà Nội, Việt Nam 🇻🇳</span>
+                    </div>
+                </div>
+                <div class="cv-info-card glass-card">
+                    <div class="cv-info-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="4" width="20" height="16" rx="2"/><polyline points="22,4 12,13 2,4"/></svg>
+                    </div>
+                    <div class="cv-info-content">
+                        <span class="cv-info-label">Email</span>
+                        <span class="cv-info-value">n.hoanganh0203@gmail.com</span>
+                    </div>
+                </div>
+            </div>
+
             <div class="about-grid">
                 <div class="about-visual reveal">
                     <div class="about-avatar-container">
@@ -154,14 +287,17 @@
                         <div class="avatar-orbit">
                             <div class="orbit-dot"></div>
                         </div>
+                        <div class="avatar-orbit avatar-orbit--2">
+                            <div class="orbit-dot orbit-dot--purple"></div>
+                        </div>
                     </div>
                     <div class="about-stats">
                         <div class="stat-item">
-                            <span class="stat-number" data-count="5">0</span>
+                            <span class="stat-number" data-count="3">0</span>
                             <span class="stat-label" data-vi="Dự án" data-en="Projects">Dự án</span>
                         </div>
                         <div class="stat-item">
-                            <span class="stat-number" data-count="3">0</span>
+                            <span class="stat-number" data-count="2">0</span>
                             <span class="stat-label" data-vi="Năm Code" data-en="Years Coding">Năm Code</span>
                         </div>
                         <div class="stat-item">
@@ -184,20 +320,66 @@
                             rằng công nghệ có thể thay đổi cuộc sống. Mình chuyên về <strong>Phát triển Web</strong>, 
                             <strong>Ứng dụng C# WPF</strong>, và <strong>Tích hợp AI</strong>.
                         </p>
-                        <p data-vi="27NetTeam không chỉ là một thương hiệu — đó là một tầm nhìn. Tầm nhìn nơi một lập trình viên trẻ Việt Nam có thể tạo ra sản phẩm cạnh tranh trên sân chơi toàn cầu. Mỗi dự án hoàn thành đưa tầm nhìn đó đến gần hơn với hiện thực." data-en="27NetTeam is more than a brand — it's a vision. A vision where a young Vietnamese developer can build products that compete on the global stage. Every project I ship brings that vision closer to reality.">
+                        <p data-vi="27NetTeam không chỉ là một thương hiệu — đó là một tầm nhìn. Tầm nhìn nơi một lập trình viên trẻ Việt Nam có thể tạo ra sản phẩm cạnh tranh trên sân chơi toàn cầu." data-en="27NetTeam is more than a brand — it's a vision. A vision where a young Vietnamese developer can build products that compete on the global stage.">
                             27NetTeam không chỉ là một thương hiệu — đó là một tầm nhìn. Tầm nhìn nơi 
                             một lập trình viên trẻ Việt Nam có thể tạo ra sản phẩm cạnh tranh trên sân 
-                            chơi toàn cầu. Mỗi dự án hoàn thành đưa tầm nhìn đó đến gần hơn với hiện thực.
+                            chơi toàn cầu.
                         </p>
                         <div class="about-tags">
-                            <span class="tag" data-vi="🚀 Tham vọng" data-en="🚀 Ambitious">🚀 Tham vọng</span>
-                            <span class="tag" data-vi="🧠 Đam mê AI" data-en="🧠 AI Enthusiast">🧠 Đam mê AI</span>
-                            <span class="tag" data-vi="💻 Full-Stack" data-en="💻 Full-Stack">💻 Full-Stack</span>
-                            <span class="tag" data-vi="🇻🇳 Made in Vietnam" data-en="🇻🇳 Made in Vietnam">🇻🇳 Made in Vietnam</span>
+                            <span class="tag" data-vi="<i class='ti-rocket'></i> Tham vọng" data-en="<i class='ti-rocket'></i> Ambitious"><i class="ti-rocket"></i> Tham vọng</span>
+                            <span class="tag" data-vi="<i class='ti-pulse'></i> Đam mê AI" data-en="<i class='ti-pulse'></i> AI Enthusiast"><i class="ti-pulse"></i> Đam mê AI</span>
+                            <span class="tag" data-vi="<i class='ti-desktop'></i> Full-Stack" data-en="<i class='ti-desktop'></i> Full-Stack"><i class="ti-desktop"></i> Full-Stack</span>
+                            <span class="tag" data-vi="<i class='ti-location-pin'></i> Made in Vietnam" data-en="<i class='ti-location-pin'></i> Made in Vietnam"><i class="ti-location-pin"></i> Made in Vietnam</span>
                         </div>
                     </div>
                 </div>
             </div>
+
+            <!-- Personal Specs -->
+            <div class="personal-specs-grid reveal" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 24px; margin-top: 48px;">
+                <!-- Talents -->
+                <div class="glass-card spec-card" style="padding: 28px; border-top: 2px solid var(--neon-green); transition: transform 0.3s var(--ease-bounce);">
+                    <div style="font-family: var(--font-display); font-size: 0.75rem; color: var(--neon-green); margin-bottom: 16px; letter-spacing: 2px; text-transform: uppercase;">[ Năng Khiếu - Tổ Chức Sự Kiện ]</div>
+                    <ul style="list-style: none; padding: 0; margin: 0; color: var(--text-secondary); font-size: 0.95rem; line-height: 1.7;">
+                        <li style="margin-bottom: 12px; display: flex; gap: 10px;">
+                            <span><i class="ti-headphone" style="font-size: 1.2rem; color: var(--neon-green);"></i></span> <span><strong>Phù thủy âm thanh (DJ)</strong>: Nhạc không cháy không lấy tiền, chuyên bơm "đồ" (nhạc) quẩy tung nóc mọi sự kiện.</span>
+                        </li>
+                        <li style="margin-bottom: 12px; display: flex; gap: 10px;">
+                            <span><i class="ti-bolt" style="font-size: 1.2rem; color: var(--neon-green);"></i></span> <span>Chuyên gia <strong>"Độc Lạ Bình Dương"</strong>: Đạo diễn các tiết mục, mini-game sự kiện tưởng chừng "vô tri" nhưng lại bao vui, bao cháy.</span>
+                        </li>
+                        <li style="display: flex; gap: 10px;">
+                            <span><i class="ti-light-bulb" style="font-size: 1.2rem; color: var(--neon-green);"></i></span> <span>Máy ấp <strong>ý tưởng điên rồ</strong>: Chuyên nghĩ ra concept "out trình", bay bổng nhưng đảm bảo 100% khả thi khi chạy thực tế.</span>
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- Strengths -->
+                <div class="glass-card spec-card" style="padding: 28px; border-top: 2px solid var(--cyan); transition: transform 0.3s var(--ease-bounce);">
+                    <div style="font-family: var(--font-display); font-size: 0.75rem; color: var(--cyan); margin-bottom: 16px; letter-spacing: 2px; text-transform: uppercase;">[ Điểm Mạnh ]</div>
+                    <ul style="list-style: none; padding: 0; margin: 0; color: var(--text-secondary); font-size: 0.95rem; line-height: 1.7;">
+                        <li style="margin-bottom: 12px; display: flex; gap: 10px;">
+                            <span><i class="ti-shield" style="font-size: 1.2rem; color: var(--cyan);"></i></span> <span><strong>Tinh thần thép</strong>: Trách nhiệm 200% khi lead những nhiệm vụ sự kiện "cao cả và phức tạp". Show càng khó, càng sáng mắt lên cày.</span>
+                        </li>
+                        <li style="margin-bottom: 12px; display: flex; gap: 10px;">
+                            <span><i class="ti-target" style="font-size: 1.2rem; color: var(--cyan);"></i></span> <span><strong>Vua xử lý khủng hoảng</strong>: Sự kiện có bể show hay có biến bất ngờ cũng nhanh trí nảy số, vá lấp mọi lỗ hổng ngay lập tức.</span>
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- Weaknesses -->
+                <div class="glass-card spec-card" style="padding: 28px; border-top: 2px solid var(--neon-pink); transition: transform 0.3s var(--ease-bounce);">
+                    <div style="font-family: var(--font-display); font-size: 0.75rem; color: var(--neon-pink); margin-bottom: 16px; letter-spacing: 2px; text-transform: uppercase;">[ Điểm Yếu (Cảnh Báo) ]</div>
+                    <ul style="list-style: none; padding: 0; margin: 0; color: var(--text-secondary); font-size: 0.95rem; line-height: 1.7;">
+                        <li style="margin-bottom: 12px; display: flex; gap: 10px;">
+                            <span><i class="ti-alert" style="font-size: 1.2rem; color: var(--neon-pink);"></i></span> <span><strong>Dễ cọc tính</strong>: Cực kỳ cầu toàn, sẵn sàng cho Ban Tổ Chức "nghe chửi" nếu làm hỏng việc (nhưng chửi xong là xắn tay vào dọn rác hộ anh em).</span>
+                        </li>
+                        <li style="display: flex; gap: 10px;">
+                            <span><i class="ti-face-smile" style="font-size: 1.2rem; color: var(--neon-pink);"></i></span> <span><strong>Chúa tể cợt nhả</strong>: Hay nhây, đùa dai đôi khi quá trớn, bù lại là liều thuốc giải stress cực mạnh cho ekip lúc căng não chạy sự kiện.</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
         </div>
     </section>
 
@@ -214,6 +396,16 @@
                 <article class="project-card reveal" id="project-raia">
                     <div class="project-card-inner glass-card">
                         <div class="project-glow" aria-hidden="true"></div>
+                        <div class="project-shine" aria-hidden="true"></div>
+                        <div class="project-preview">
+                            <div class="project-preview-content">
+                                <div class="preview-code-line"><span class="code-keyword">class</span> <span class="code-class">RAIA</span> {</div>
+                                <div class="preview-code-line">  <span class="code-keyword">async</span> <span class="code-func">protect</span>() {</div>
+                                <div class="preview-code-line">    <span class="code-keyword">await</span> ai.<span class="code-func">analyze</span>();</div>
+                                <div class="preview-code-line">  }</div>
+                                <div class="preview-code-line">}</div>
+                            </div>
+                        </div>
                         <div class="project-header">
                             <div class="project-icon">
                                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
@@ -231,8 +423,7 @@
                         <p class="project-subtitle" data-vi="Bảo vệ AI Thời gian thực" data-en="Real-time AI Protection">Bảo vệ AI Thời gian thực</p>
                         <p class="project-description" data-vi="Hệ thống bảo mật thông minh sử dụng phân tích AI thời gian thực để phát hiện và ngăn chặn các mối đe dọa. Được xây dựng bằng mô hình học máy tiên tiến và kiến trúc web hiện đại." data-en="An intelligent security system leveraging real-time AI analysis to detect and prevent threats. Built with advanced machine learning models and modern web architecture.">
                             Hệ thống bảo mật thông minh sử dụng phân tích AI thời gian thực 
-                            để phát hiện và ngăn chặn các mối đe dọa. Được xây dựng bằng mô hình 
-                            học máy tiên tiến và kiến trúc web hiện đại.
+                            để phát hiện và ngăn chặn các mối đe dọa.
                         </p>
                         <div class="project-tech">
                             <span class="tech-tag">AI/ML</span>
@@ -246,10 +437,20 @@
                     </div>
                 </article>
 
-                <!-- Project 2: Future AI Tools -->
+                <!-- Project 2: AI Toolkit -->
                 <article class="project-card reveal" id="project-ai-tools">
                     <div class="project-card-inner glass-card">
                         <div class="project-glow" aria-hidden="true"></div>
+                        <div class="project-shine" aria-hidden="true"></div>
+                        <div class="project-preview">
+                            <div class="project-preview-content">
+                                <div class="preview-code-line"><span class="code-keyword">import</span> { <span class="code-class">AIEngine</span> }</div>
+                                <div class="preview-code-line"><span class="code-keyword">const</span> ai = <span class="code-keyword">new</span> <span class="code-class">AIEngine</span>()</div>
+                                <div class="preview-code-line">ai.<span class="code-func">automate</span>({</div>
+                                <div class="preview-code-line">  model: <span class="code-str">'gpt-4'</span></div>
+                                <div class="preview-code-line">})</div>
+                            </div>
+                        </div>
                         <div class="project-header">
                             <div class="project-icon">
                                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
@@ -264,10 +465,9 @@
                         </div>
                         <h3 class="project-title">AI Toolkit</h3>
                         <p class="project-subtitle" data-vi="Bộ công cụ AI Tương lai" data-en="Future AI-Powered Tools">Bộ công cụ AI Tương lai</p>
-                        <p class="project-description" data-vi="Bộ công cụ AI thế hệ mới được thiết kế để tự động hóa quy trình làm việc, nâng cao năng suất và mang tự động hóa thông minh vào các tác vụ hàng ngày. Được hỗ trợ bởi các mô hình ngôn ngữ tiên tiến." data-en="A suite of next-generation AI tools designed to automate workflows, enhance productivity, and bring intelligent automation to everyday tasks. Powered by cutting-edge language models.">
+                        <p class="project-description" data-vi="Bộ công cụ AI thế hệ mới được thiết kế để tự động hóa quy trình làm việc, nâng cao năng suất và mang tự động hóa thông minh vào các tác vụ hàng ngày." data-en="A suite of next-generation AI tools designed to automate workflows, enhance productivity, and bring intelligent automation to everyday tasks.">
                             Bộ công cụ AI thế hệ mới được thiết kế để tự động hóa quy trình làm việc, 
-                            nâng cao năng suất và mang tự động hóa thông minh vào các tác vụ hàng ngày. 
-                            Được hỗ trợ bởi các mô hình ngôn ngữ tiên tiến.
+                            nâng cao năng suất.
                         </p>
                         <div class="project-tech">
                             <span class="tech-tag">GPT</span>
@@ -281,10 +481,20 @@
                     </div>
                 </article>
 
-                <!-- Project 3: Web Platform -->
+                <!-- Project 3: NetPortal -->
                 <article class="project-card reveal" id="project-web-platform">
                     <div class="project-card-inner glass-card">
                         <div class="project-glow" aria-hidden="true"></div>
+                        <div class="project-shine" aria-hidden="true"></div>
+                        <div class="project-preview">
+                            <div class="project-preview-content">
+                                <div class="preview-code-line"><span class="code-keyword">export</span> <span class="code-keyword">default</span> {</div>
+                                <div class="preview-code-line">  name: <span class="code-str">'NetPortal'</span>,</div>
+                                <div class="preview-code-line">  stack: [<span class="code-str">'React'</span>,</div>
+                                <div class="preview-code-line">    <span class="code-str">'Node'</span>],</div>
+                                <div class="preview-code-line">}</div>
+                            </div>
+                        </div>
                         <div class="project-header">
                             <div class="project-icon">
                                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
@@ -302,7 +512,7 @@
                         <p class="project-subtitle" data-vi="Nền tảng Cộng đồng Lập trình" data-en="Developer Community Platform">Nền tảng Cộng đồng Lập trình</p>
                         <p class="project-description" data-vi="Nền tảng kết nối các sinh viên lập trình Việt Nam, nơi trưng bày dự án, đánh giá code, và nhận mentorship từ các chuyên gia trong ngành." data-en="A collaborative platform connecting Vietnamese student developers, featuring project showcases, code reviews, and mentorship from industry professionals.">
                             Nền tảng kết nối các sinh viên lập trình Việt Nam, nơi trưng bày 
-                            dự án, đánh giá code, và nhận mentorship từ các chuyên gia trong ngành.
+                            dự án và nhận mentorship.
                         </p>
                         <div class="project-tech">
                             <span class="tech-tag">Full-Stack</span>
@@ -435,17 +645,17 @@
                 </div>
                 <div class="vision-pillars">
                     <div class="pillar glass-card reveal">
-                        <div class="pillar-icon">🌏</div>
+                        <div class="pillar-icon"><i class="ti-world"></i></div>
                         <h3 data-vi="Tác động Toàn cầu" data-en="Global Impact">Tác động Toàn cầu</h3>
                         <p data-vi="Xây dựng sản phẩm vượt qua biên giới, phục vụ người dùng trên toàn thế giới." data-en="Building products that transcend borders and serve users worldwide.">Xây dựng sản phẩm vượt qua biên giới, phục vụ người dùng trên toàn thế giới.</p>
                     </div>
                     <div class="pillar glass-card reveal">
-                        <div class="pillar-icon">🤖</div>
+                        <div class="pillar-icon"><i class="ti-pulse"></i></div>
                         <h3 data-vi="AI là Ưu tiên" data-en="AI-First Approach">AI là Ưu tiên</h3>
                         <p data-vi="Tích hợp trí tuệ nhân tạo vào mọi sản phẩm chúng tôi tạo ra." data-en="Integrating artificial intelligence into every product we create.">Tích hợp trí tuệ nhân tạo vào mọi sản phẩm chúng tôi tạo ra.</p>
                     </div>
                     <div class="pillar glass-card reveal">
-                        <div class="pillar-icon">🎓</div>
+                        <div class="pillar-icon"><i class="ti-book"></i></div>
                         <h3 data-vi="Học & Xây dựng" data-en="Learn & Build">Học & Xây dựng</h3>
                         <p data-vi="Biến việc học thành sản phẩm và trải nghiệm thực tế." data-en="Turning education into real-world products and experiences.">Biến việc học thành sản phẩm và trải nghiệm thực tế.</p>
                     </div>

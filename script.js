@@ -1,10 +1,231 @@
 /* ============================================================
-   27NetTeam Landing Page — script.js
-   Animations, Interactions & Visual Effects
+   27NetTeam CV Page — script.js
+   Cinematic Intro, Animations, Interactions & Visual Effects
    ============================================================ */
 
 (function () {
     'use strict';
+
+    // ===================== CINEMATIC INTRO =====================
+    const CinematicIntro = {
+        overlay: null,
+        logoWrap: null,
+        nameEl: null,
+        taglineEl: null,
+        progressEl: null,
+        skipBtn: null,
+        canvas: null,
+        ctx: null,
+        isSkipped: false,
+        startTime: 0,
+        totalDuration: 10000, // ms
+
+        init() {
+            this.overlay = document.getElementById('intro-overlay');
+            this.logoWrap = document.getElementById('intro-logo-wrap');
+            this.nameEl = document.getElementById('intro-name');
+            this.taglineEl = document.getElementById('intro-tagline');
+            this.progressEl = document.getElementById('intro-progress');
+            this.skipBtn = document.getElementById('intro-skip');
+            this.canvas = document.getElementById('intro-particles-canvas');
+
+            if (!this.overlay) return;
+
+            // Ensure body doesn't scroll during intro
+            document.body.style.overflow = 'hidden';
+
+            // Setup canvas
+            if (this.canvas) {
+                this.ctx = this.canvas.getContext('2d');
+                this.canvas.width = window.innerWidth;
+                this.canvas.height = window.innerHeight;
+                this.createIntroParticles();
+                this.animateIntroParticles();
+            }
+
+            // Skip button
+            if (this.skipBtn) {
+                this.skipBtn.addEventListener('click', () => this.skip());
+            }
+
+            // Keyboard skip
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape' || e.key === 'Enter' || e.key === ' ') {
+                    this.skip();
+                }
+            }, { once: true });
+
+            // Start sequence
+            this.startTime = performance.now();
+            this.startSequence();
+        },
+
+        createIntroParticles() {
+            this.particles = [];
+            const count = window.innerWidth < 768 ? 30 : 60;
+            for (let i = 0; i < count; i++) {
+                this.particles.push({
+                    x: Math.random() * this.canvas.width,
+                    y: Math.random() * this.canvas.height,
+                    size: Math.random() * 1.5 + 0.3,
+                    speedX: (Math.random() - 0.5) * 0.3,
+                    speedY: (Math.random() - 0.5) * 0.3,
+                    opacity: Math.random() * 0.3 + 0.1,
+                    color: Math.random() > 0.5 ? '0, 240, 255' : '168, 85, 247'
+                });
+            }
+        },
+
+        animateIntroParticles() {
+            if (!this.ctx || this.isSkipped) return;
+            this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+
+            this.particles.forEach(p => {
+                p.x += p.speedX;
+                p.y += p.speedY;
+                if (p.x < 0) p.x = this.canvas.width;
+                if (p.x > this.canvas.width) p.x = 0;
+                if (p.y < 0) p.y = this.canvas.height;
+                if (p.y > this.canvas.height) p.y = 0;
+
+                this.ctx.beginPath();
+                this.ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+                this.ctx.fillStyle = `rgba(${p.color}, ${p.opacity})`;
+                this.ctx.fill();
+            });
+
+            requestAnimationFrame(() => this.animateIntroParticles());
+        },
+
+        async startSequence() {
+            // Phase 0: Show progress bar
+            await this.delay(500);
+            if (this.isSkipped) return;
+            this.progressEl.classList.add('active');
+            this.updateProgress();
+
+            // Phase 1: Logo draw (stroke animation via CSS)
+            await this.delay(1500);
+            if (this.isSkipped) return;
+            this.logoWrap.classList.add('active');
+
+            // Phase 2: Show 27 text with glitch
+            await this.delay(2000);
+            if (this.isSkipped) return;
+            this.logoWrap.classList.add('text-visible');
+
+            // Phase 3: Type name
+            await this.delay(1000);
+            if (this.isSkipped) return;
+            this.nameEl.classList.add('active');
+            await this.typeText('MY CV');
+
+            // Quick glitch after typing
+            this.nameEl.classList.add('intro-glitch-text');
+            setTimeout(() => { if(this.nameEl) this.nameEl.classList.remove('intro-glitch-text'); }, 400);
+
+            // Phase 4: Show tagline
+            await this.delay(800);
+            if (this.isSkipped) return;
+            this.taglineEl.classList.add('active');
+
+            // Phase 5: Cinematic Hold
+            await this.delay(2500);
+            if (this.isSkipped) return;
+
+            // Phase 6: Flash transition (EXPLOSIVE)
+            const flash = document.getElementById('intro-flash');
+            if (flash) {
+                flash.classList.add('explosive');
+                document.body.classList.add('screen-shake-intense');
+                this.explodeParticles();
+                await this.delay(500); // Wait for flash to peak
+            }
+            if (this.isSkipped) return;
+
+            this.exit();
+        },
+
+        explodeParticles() {
+            if (!this.particles || this.isSkipped || !this.canvas) return;
+            const centerX = this.canvas.width / 2;
+            const centerY = this.canvas.height / 2;
+            this.particles.forEach(p => {
+                const dx = p.x - centerX;
+                const dy = p.y - centerY;
+                const dist = Math.sqrt(dx * dx + dy * dy) || 1;
+                // Launch particles outward at insane speeds
+                p.speedX = (dx / dist) * (Math.random() * 25 + 15);
+                p.speedY = (dy / dist) * (Math.random() * 25 + 15);
+                p.size *= 4; // Make them chunkier
+                p.color = '0, 240, 255'; // turn all cyan
+                p.opacity = 1;
+            });
+        },
+
+        async typeText(text) {
+            const textEl = this.nameEl.querySelector('.intro-name-text');
+            if (!textEl) return;
+
+            for (let i = 0; i < text.length; i++) {
+                if (this.isSkipped) return;
+                textEl.textContent += text[i];
+                await this.delay(80 + Math.random() * 60);
+            }
+        },
+
+        updateProgress() {
+            if (this.isSkipped) return;
+            const fill = this.progressEl.querySelector('.intro-progress-fill');
+            if (!fill) return;
+
+            const elapsed = performance.now() - this.startTime;
+            const progress = Math.min(elapsed / this.totalDuration, 1);
+            fill.style.width = (progress * 100) + '%';
+
+            if (progress < 1) {
+                requestAnimationFrame(() => this.updateProgress());
+            }
+        },
+
+        skip() {
+            if (this.isSkipped) return;
+            this.isSkipped = true;
+            this.exit();
+        },
+
+        skipImmediately() {
+            if (this.overlay) {
+                this.overlay.classList.add('intro-done');
+            }
+            if (this.skipBtn) {
+                this.skipBtn.classList.add('hidden');
+            }
+            document.body.classList.add('intro-complete');
+        },
+
+        exit() {
+            this.isSkipped = true;
+
+            // Fade out
+            this.overlay.classList.add('intro-hidden');
+            if (this.skipBtn) {
+                this.skipBtn.classList.add('hidden');
+            }
+
+            // Remove after transition & restore scroll
+            setTimeout(() => {
+                this.overlay.classList.add('intro-done');
+                document.body.classList.add('intro-complete');
+                document.body.style.overflow = '';
+                document.body.classList.remove('screen-shake-intense');
+            }, 900);
+        },
+
+        delay(ms) {
+            return new Promise(resolve => setTimeout(resolve, ms));
+        }
+    };
 
     // ===================== PARTICLES SYSTEM =====================
     const ParticleSystem = {
@@ -44,7 +265,6 @@
 
         createParticles() {
             this.particles = [];
-            // Reduce particle count on mobile for performance
             const count = window.innerWidth < 768 ? 40 : this.config.count;
             for (let i = 0; i < count; i++) {
                 this.particles.push({
@@ -63,17 +283,14 @@
             this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
 
             this.particles.forEach((p, i) => {
-                // Update position
                 p.x += p.vx;
                 p.y += p.vy;
 
-                // Boundary wrapping
                 if (p.x < 0) p.x = this.canvas.width;
                 if (p.x > this.canvas.width) p.x = 0;
                 if (p.y < 0) p.y = this.canvas.height;
                 if (p.y > this.canvas.height) p.y = 0;
 
-                // Mouse repulsion
                 const dx = this.mouse.x - p.x;
                 const dy = this.mouse.y - p.y;
                 const dist = Math.sqrt(dx * dx + dy * dy);
@@ -83,17 +300,14 @@
                     p.vy -= (dy / dist) * force * 0.02;
                 }
 
-                // Damping
                 p.vx *= 0.999;
                 p.vy *= 0.999;
 
-                // Draw particle
                 this.ctx.beginPath();
                 this.ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
                 this.ctx.fillStyle = p.color + p.opacity + ')';
                 this.ctx.fill();
 
-                // Draw connections
                 for (let j = i + 1; j < this.particles.length; j++) {
                     const p2 = this.particles[j];
                     const ddx = p.x - p2.x;
@@ -167,22 +381,18 @@
             this.links = document.getElementById('nav-links');
             this.sections = document.querySelectorAll('section[id]');
 
-            // Scroll effect
             window.addEventListener('scroll', () => this.onScroll());
 
-            // Mobile toggle
             if (this.toggle) {
                 this.toggle.addEventListener('click', () => this.toggleMenu());
             }
 
-            // Close menu on link click
             document.querySelectorAll('.nav-link').forEach((link) => {
                 link.addEventListener('click', () => {
                     this.closeMenu();
                 });
             });
 
-            // Close menu on outside click
             document.addEventListener('click', (e) => {
                 if (this.links && this.links.classList.contains('open') &&
                     !this.links.contains(e.target) && !this.toggle.contains(e.target)) {
@@ -194,14 +404,12 @@
         onScroll() {
             const scrollY = window.scrollY;
 
-            // Add scrolled class
             if (scrollY > 50) {
                 this.el.classList.add('scrolled');
             } else {
                 this.el.classList.remove('scrolled');
             }
 
-            // Active section highlighting
             this.sections.forEach((section) => {
                 const top = section.offsetTop - 120;
                 const bottom = top + section.offsetHeight;
@@ -271,7 +479,6 @@
                             const level = bar.getAttribute('data-level');
                             const fill = bar.querySelector('.skill-bar-fill');
                             if (fill) {
-                                // Small delay for cascading effect
                                 setTimeout(() => {
                                     fill.style.width = level + '%';
                                 }, 200);
@@ -315,8 +522,6 @@
             const update = (currentTime) => {
                 const elapsed = currentTime - startTime;
                 const progress = Math.min(elapsed / duration, 1);
-
-                // Ease-out cubic
                 const eased = 1 - Math.pow(1 - progress, 3);
                 const current = Math.round(eased * target);
 
@@ -336,18 +541,16 @@
     // ===================== PARALLAX EFFECT =====================
     const Parallax = {
         init() {
-            if (window.innerWidth < 768) return; // Disable on mobile
+            if (window.innerWidth < 768) return;
 
             window.addEventListener('scroll', () => {
                 const scrollY = window.scrollY;
 
-                // Parallax on hero grid
                 const heroGrid = document.querySelector('.hero-bg-grid');
                 if (heroGrid) {
                     heroGrid.style.transform = `translateY(${scrollY * 0.3}px)`;
                 }
 
-                // Parallax on decorative elements
                 const decorLeft = document.querySelector('.hero-decor--left');
                 const decorRight = document.querySelector('.hero-decor--right');
                 if (decorLeft) {
@@ -363,7 +566,7 @@
     // ===================== TILT EFFECT ON CARDS =====================
     const TiltEffect = {
         init() {
-            if (window.innerWidth < 768) return; // Disable on mobile/touch
+            if (window.innerWidth < 768) return;
 
             const cards = document.querySelectorAll('.project-card-inner, .skill-card');
 
@@ -380,7 +583,6 @@
 
                     card.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale3d(1.02, 1.02, 1.02)`;
 
-                    // Move glow element
                     const glow = card.querySelector('.project-glow');
                     if (glow) {
                         glow.style.left = x - rect.width + 'px';
@@ -447,7 +649,7 @@
                     const targetId = anchor.getAttribute('href');
                     const target = document.querySelector(targetId);
                     if (target) {
-                        const offset = 80; // navbar height
+                        const offset = 80;
                         const top = target.getBoundingClientRect().top + window.scrollY - offset;
                         window.scrollTo({ top, behavior: 'smooth' });
                     }
@@ -456,7 +658,7 @@
         }
     };
 
-    // ===================== PROJECT CARD HOVER SOUND (OPTIONAL VISUAL FEEDBACK) =====================
+    // ===================== PROJECT CARD HOVER FEEDBACK =====================
     const CardHoverFeedback = {
         init() {
             const cards = document.querySelectorAll('.project-card, .contact-link, .pillar');
@@ -472,7 +674,6 @@
     // ===================== LOADING ANIMATION =====================
     const LoadingAnimation = {
         init() {
-            // Reveal hero elements with stagger on page load
             window.addEventListener('load', () => {
                 document.body.classList.add('loaded');
 
@@ -495,7 +696,6 @@
             this.btn = document.getElementById('lang-switcher');
             if (!this.btn) return;
 
-            // Load saved language preference
             const saved = localStorage.getItem('27nt-lang');
             if (saved && (saved === 'vi' || saved === 'en')) {
                 this.currentLang = saved;
@@ -514,7 +714,6 @@
         },
 
         applyLanguage(lang) {
-            // Update button active state
             const options = this.btn.querySelectorAll('.lang-option');
             options.forEach((opt) => {
                 if (opt.getAttribute('data-lang') === lang) {
@@ -524,10 +723,8 @@
                 }
             });
 
-            // Update HTML lang attribute
             document.documentElement.lang = lang;
 
-            // Update all elements with data-vi / data-en attributes
             document.querySelectorAll('[data-vi][data-en]').forEach((el) => {
                 const text = el.getAttribute('data-' + lang);
                 if (text !== null) {
@@ -535,7 +732,6 @@
                 }
             });
 
-            // Update tagline main text
             const tagline = document.querySelector('.hero-tagline');
             if (tagline) {
                 const taglineMain = tagline.querySelector('.tagline-main');
@@ -548,8 +744,27 @@
         }
     };
 
+    // ===================== FLOATING ELEMENTS ANIMATION =====================
+    const FloatingElements = {
+        init() {
+            if (window.innerWidth < 768) return;
+            
+            const elements = document.querySelectorAll('.float-el');
+            elements.forEach(el => {
+                // Random continuous floating
+                const duration = 15 + Math.random() * 10;
+                const delay = Math.random() * 5;
+                el.style.animation = `float-element ${duration}s linear ${delay}s infinite`;
+            });
+        }
+    };
+
     // ===================== INITIALIZE EVERYTHING =====================
     document.addEventListener('DOMContentLoaded', () => {
+        // Start cinematic intro first
+        CinematicIntro.init();
+
+        // Initialize everything else
         ParticleSystem.init();
         CursorGlow.init();
         ScrollReveal.init();
@@ -564,6 +779,7 @@
         CardHoverFeedback.init();
         LoadingAnimation.init();
         LanguageSwitcher.init();
+        FloatingElements.init();
     });
 
 })();
