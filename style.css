@@ -345,7 +345,7 @@ body:hover #cursor-glow {
 
 .intro-terminal {
     position: absolute;
-    top: 30px;
+    top: calc(12vh + 30px);
     left: 30px;
     font-family: var(--font-mono);
     font-size: 0.75rem;
