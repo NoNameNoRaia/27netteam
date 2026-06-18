@@ -318,6 +318,57 @@ body:hover #cursor-glow {
     z-index: 2;
 }
 
+/* ===================== CINEMATIC ELEMENTS ===================== */
+.cinematic-bar {
+    position: absolute;
+    left: 0;
+    width: 100%;
+    height: 12vh;
+    background: #020202;
+    z-index: 10001; /* Above particles, below flash */
+    transition: transform 1.2s cubic-bezier(0.8, 0, 0.2, 1);
+}
+
+.cinematic-bar.top {
+    top: 0;
+    transform: translateY(-100%);
+}
+
+.cinematic-bar.bottom {
+    bottom: 0;
+    transform: translateY(100%);
+}
+
+.cinematic-bar.active {
+    transform: translateY(0);
+}
+
+.intro-terminal {
+    position: absolute;
+    top: 30px;
+    left: 30px;
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    color: var(--neon-green);
+    text-shadow: 0 0 5px rgba(0, 255, 128, 0.5);
+    z-index: 10000;
+    text-align: left;
+    white-space: pre-wrap;
+    pointer-events: none;
+    opacity: 0.8;
+}
+
+.terminal-line {
+    margin-bottom: 4px;
+    opacity: 0;
+    animation: type-line 0.1s steps(20, end) forwards;
+}
+
+@keyframes type-line {
+    from { opacity: 0; transform: translateX(-5px); }
+    to { opacity: 1; transform: translateX(0); }
+}
+
 .intro-content {
     position: relative;
     z-index: 3;
@@ -398,24 +449,45 @@ body:hover #cursor-glow {
 /* Name typing */
 .intro-name {
     font-family: var(--font-display);
-    font-size: clamp(1.2rem, 3vw, 2rem);
-    font-weight: 700;
-    letter-spacing: 6px;
+    font-size: clamp(1.2rem, 3.5vw, 2.5rem);
+    font-weight: 300;
+    letter-spacing: 12px;
     text-transform: uppercase;
     opacity: 0;
-    transform: translateY(20px);
-    transition: opacity 0.5s ease, transform 0.5s ease;
+    transform: scale(1.05) translateY(10px);
+    transition: opacity 2s cubic-bezier(0.2, 1, 0.3, 1), transform 2s cubic-bezier(0.2, 1, 0.3, 1);
     color: var(--text-primary);
-    min-height: 2.5rem;
+    min-height: 3rem;
+    position: relative;
+    white-space: nowrap;
 }
+
+/* Kojima-style connecting lines */
+.intro-name::before, .intro-name::after {
+    content: '';
+    position: absolute;
+    width: 0;
+    height: 1px;
+    background: var(--cyan);
+    top: 50%;
+    opacity: 0;
+    transition: width 2s cubic-bezier(0.2, 1, 0.3, 1) 0.5s, opacity 2s ease 0.5s;
+}
+.intro-name::before { right: 100%; margin-right: 15px; }
+.intro-name::after { left: 100%; margin-left: 15px; }
 
 .intro-name.active {
     opacity: 1;
-    transform: translateY(0);
+    transform: scale(1) translateY(0);
+}
+
+.intro-name.active::before, .intro-name.active::after {
+    width: 30vw;
+    opacity: 0.4;
 }
 
 .intro-name-text {
-    background: linear-gradient(135deg, #fff, var(--cyan), var(--purple));
+    background: linear-gradient(135deg, #fff 40%, var(--cyan), var(--purple));
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
@@ -425,6 +497,7 @@ body:hover #cursor-glow {
     color: var(--cyan);
     animation: blink-cursor 0.7s step-end infinite;
     -webkit-text-fill-color: var(--cyan);
+    font-weight: 100;
 }
 
 @keyframes blink-cursor {
@@ -488,23 +561,21 @@ body:hover #cursor-glow {
     transition: width 0.1s linear;
 }
 
-/* Flash transition */
-.intro-flash {
-    position: absolute;
-    inset: 0;
-    background: #fff;
+/* CRT Collapse Transition */
+.intro-crt-collapse {
+    animation: crt-collapse 2s cubic-bezier(0.7, 0, 0.3, 1) forwards;
+    transform-origin: center center;
+    position: relative;
     z-index: 10002;
-    opacity: 0;
-    pointer-events: none;
-    transition: opacity 0.4s ease-in;
-    mix-blend-mode: overlay;
-    box-shadow: inset 0 0 150px rgba(0, 240, 255, 0.5);
+    /* Adding a massive glow to the overlay when it squishes */
+    box-shadow: 0 0 0 rgba(0, 240, 255, 0);
 }
 
-.intro-flash.active {
-    opacity: 1;
-    background: linear-gradient(to center, #fff, rgba(0, 240, 255, 0.2));
-    filter: blur(10px);
+@keyframes crt-collapse {
+    0% { transform: scale(1, 1); filter: brightness(1); }
+    30% { transform: scale(1, 0.004); filter: brightness(50); box-shadow: 0 0 100px #fff, 0 0 200px var(--cyan); }
+    60% { transform: scale(1, 0.004); filter: brightness(50); box-shadow: 0 0 100px #fff, 0 0 200px var(--cyan); }
+    100% { transform: scale(0, 0.004); filter: brightness(50); opacity: 0; }
 }
 
 /* ===================== EXPLOSIVE EFFECTS ===================== */

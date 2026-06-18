@@ -98,34 +98,36 @@
         },
 
         async startSequence() {
-            // Phase 0: Show progress bar
-            await this.delay(500);
+            // Phase 0: Show progress bar & Cinematic Bars
+            await this.delay(200);
             if (this.isSkipped) return;
             this.progressEl.classList.add('active');
             this.updateProgress();
 
-            // Phase 1: Logo draw (stroke animation via CSS)
-            await this.delay(1500);
+            const cineTop = document.getElementById('cine-bar-top');
+            const cineBottom = document.getElementById('cine-bar-bottom');
+            if (cineTop) cineTop.classList.add('active');
+            if (cineBottom) cineBottom.classList.add('active');
+
+            // Phase 1: Terminal Boot Log
+            await this.delay(300);
+            if (!this.isSkipped) await this.terminalBoot();
+
+            // Phase 2: Logo Glitch Reveal
+            await this.delay(400);
             if (this.isSkipped) return;
             this.logoWrap.classList.add('active');
-
-            // Phase 2: Show 27 text with glitch
-            await this.delay(2000);
-            if (this.isSkipped) return;
             this.logoWrap.classList.add('text-visible');
 
-            // Phase 3: Type name
+            // Phase 3: Kojima-style Name Draw
             await this.delay(1000);
             if (this.isSkipped) return;
+            const textEl = this.nameEl.querySelector('.intro-name-text');
+            if (textEl) textEl.textContent = 'NGUYỄN NHƯ HẢI ĐĂNG';
             this.nameEl.classList.add('active');
-            await this.typeText('MY CV');
-
-            // Quick glitch after typing
-            this.nameEl.classList.add('intro-glitch-text');
-            setTimeout(() => { if(this.nameEl) this.nameEl.classList.remove('intro-glitch-text'); }, 400);
 
             // Phase 4: Show tagline
-            await this.delay(800);
+            await this.delay(1200);
             if (this.isSkipped) return;
             this.taglineEl.classList.add('active');
 
@@ -133,17 +135,44 @@
             await this.delay(2500);
             if (this.isSkipped) return;
 
-            // Phase 6: Flash transition (EXPLOSIVE)
-            const flash = document.getElementById('intro-flash');
-            if (flash) {
-                flash.classList.add('explosive');
-                document.body.classList.add('screen-shake-intense');
+            // Phase 6: CRT TV Collapse
+            const overlay = document.getElementById('intro-overlay');
+            if (cineTop) cineTop.classList.remove('active');
+            if (cineBottom) cineBottom.classList.remove('active');
+            const terminal = document.getElementById('intro-terminal');
+            if (terminal) terminal.style.opacity = '0';
+
+            if (overlay) {
+                // Remove any previous transforms to allow the animation to override
+                overlay.classList.add('intro-crt-collapse');
                 this.explodeParticles();
-                await this.delay(500); // Wait for flash to peak
+                await this.delay(2000); // Wait for CRT collapse to finish (2 seconds)
             }
             if (this.isSkipped) return;
 
             this.exit();
+        },
+
+        async terminalBoot() {
+            const terminal = document.getElementById('intro-terminal');
+            if (!terminal) return;
+            const logs = [
+                "INIT NEURAL LINK...",
+                "LOADING CORE MODULES...",
+                "DECRYPTING ARCHIVES...",
+                "MOUNTING /DEV/SDA1...",
+                "BYPASSING FIREWALL...",
+                "ACCESS GRANTED.",
+                "SYSTEM READY."
+            ];
+            for (let i = 0; i < logs.length; i++) {
+                if (this.isSkipped) return;
+                const line = document.createElement('div');
+                line.className = 'terminal-line';
+                line.textContent = `> ${logs[i]}`;
+                terminal.appendChild(line);
+                await this.delay(120 + Math.random() * 150);
+            }
         },
 
         explodeParticles() {
@@ -161,17 +190,6 @@
                 p.color = '0, 240, 255'; // turn all cyan
                 p.opacity = 1;
             });
-        },
-
-        async typeText(text) {
-            const textEl = this.nameEl.querySelector('.intro-name-text');
-            if (!textEl) return;
-
-            for (let i = 0; i < text.length; i++) {
-                if (this.isSkipped) return;
-                textEl.textContent += text[i];
-                await this.delay(80 + Math.random() * 60);
-            }
         },
 
         updateProgress() {
